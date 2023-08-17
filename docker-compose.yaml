@@ -1,0 +1,69 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: bmatch
+      POSTGRES_PASSWORD: newpassword
+      POSTGRES_DB: bmatch
+    volumes:
+      - ./sql_scripts:/docker-entrypoint-initdb.d/
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  consul:
+    image: hashicorp/consul:latest
+    command: [ "agent", "-config-dir=/etc/consul.d" ]
+    volumes:
+      - ./consul:/etc/consul.d
+    ports:
+      - 8500:8500
+
+  # UNCOMMENT AT THE PRODUCTION
+  # dragonflydb:
+  #   image: docker.dragonflydb.io/dragonflydb/dragonfly
+  #   ulimits:
+  #     memlock: -1
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - dragonflydata:/data
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  kafka-kraft:
+    image: confluentinc/cp-kafka:7.4.1
+    container_name: kafka-kraft
+    hostname: kafka-kraft
+    ports:
+      - "9101:9101"
+      - "9092:9092"
+      - "29092:29092"
+      - "29093:29093"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-kraft:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka-kraft:29092,CONTROLLER://kafka-kraft:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      CLUSTER_ID: 'WX3rG1mGQjy25GwDpiW48w'
+      # echo -n $(uuidgen -r | sed 's/-//g' | xxd -r -p | base64 | cut -c 1-22)
+
+
+volumes:
+  db_data:
+  # dragonflydata:
+  redis-data:

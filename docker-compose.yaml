@@ -20,6 +20,19 @@ services:
       - ./consul:/etc/consul.d
     ports:
       - 8500:8500
+  
+  gateway:
+    image: glad2os/bmatch.gateway
+    environment:
+      IS_PROD: false
+      DB_SCHEME: bmatch
+      DB_PASSWORD: newpassword
+      DB_USERNAME: bmatch
+      SPRING_CLOUD_CONSUL_HOST: consul
+      DB_HOST: postgres
+    ports:
+      - 8002:8002
+    command: /bin/sh -c "sh /app/wait-for-postgres.sh consul:8500 && java -jar /app/app.jar"
 
   # UNCOMMENT AT THE PRODUCTION
   # dragonflydb:

@@ -30,9 +30,16 @@ services:
       DB_USERNAME: bmatch
       SPRING_CLOUD_CONSUL_HOST: consul
       DB_HOST: postgres
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+      JWT_TOKEN: YourSecretKeyShouldBeVerySecureAndNotPublic
+      SSL_KEYSTORE_FILE: /app/ssl/keystore.jks
+      SSL_KEYSTORE_PASSWORD: mypassword
     ports:
       - 8002:8002
     command: /bin/sh -c "sh /app/wait-for-postgres.sh consul:8500 && java -jar /app/app.jar"
+    volumes:
+      - ./ssl/keystore.jks:/app/ssl/keystore.jks
 
   # UNCOMMENT AT THE PRODUCTION
   # dragonflydb:

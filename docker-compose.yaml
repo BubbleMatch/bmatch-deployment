@@ -57,33 +57,20 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+      - ./redis-conf/redis.conf:/usr/local/etc/redis/redis.conf
 
-  kafka-kraft:
-    image: confluentinc/cp-kafka:7.4.1
-    container_name: kafka-kraft
-    hostname: kafka-kraft
-    ports:
-      - "9101:9101"
-      - "9092:9092"
-      - "29092:29092"
-      - "29093:29093"
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092'
-      KAFKA_JMX_PORT: 9101
-      KAFKA_JMX_HOSTNAME: localhost
-      KAFKA_PROCESS_ROLES: 'broker,controller'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka-kraft:29093'
-      KAFKA_LISTENERS: 'PLAINTEXT://kafka-kraft:29092,CONTROLLER://kafka-kraft:29093,PLAINTEXT_HOST://0.0.0.0:9092'
-      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
-      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      CLUSTER_ID: 'WX3rG1mGQjy25GwDpiW48w'
-      # echo -n $(uuidgen -r | sed 's/-//g' | xxd -r -p | base64 | cut -c 1-22)
-
+  rabbitmq:
+      image: bmatch-rabbitmq
+      ports:
+        - "15672:15672" # Менеджер RabbitMQ
+        - "5672:5672"   # AMQP порт
+      environment:
+        - RABBITMQ_DEFAULT_USER=bmatch
+        - RABBITMQ_DEFAULT_PASS=newpassword
+      labels:
+        NAME: "rabbitmq"
 
 volumes:
   db_data:
-  # dragonflydata:
+  #dragonflydata:
   redis-data:

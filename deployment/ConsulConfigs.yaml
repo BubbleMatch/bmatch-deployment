@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-config
+data:
+  consul.hcl: |
+    datacenter = "dc1"
+    data_dir = "/opt/consul"
+    client_addr = "0.0.0.0"
+
+    ui_config {
+      enabled = true
+    }
+
+    server = true
+    bootstrap_expect = 1
+    bind_addr = "0.0.0.0"
+    enable_script_checks = true
+    advertise_addr = "127.0.0.1"
+  redis.hcl: |
+    service {
+    name = "redis"
+    tags = ["primary"]
+    address = "redis"
+    port = 6379
+
+    check {
+      id = "redis"
+      name = "Redis health check"
+      tcp = "redis:6379"
+      interval = "10s"
+      timeout = "2s"
+    }
+    }
+  postgres.hcl: |
+    services = [
+    {
+      name = "postgres"
+      tags = ["primary"]
+      address = "postgres"
+      port = 5432
+      checks = [
+        {
+          name = "PostgreSQL TCP Check"
+          tcp = "postgres:5432"
+          interval = "10s"
+          timeout = "1s"
+        }
+      ]
+    }
+    ]
+  rabbitmq.hcl: | 
+    service {
+    id   = "rabbitmq"
+    name = "rabbitmq"
+    tags = ["message-queue", "amqp", "management"]
+    
+    address = "rabbitmq"
+    port    = 5672
+    
+    checks = [
+      {
+        id       = "rabbitmq_check"
+        name     = "RabbitMQ health check"
+        http     = "http://rabbitmq:15672/"  # менеджер RabbitMQ
+        interval = "10s"
+        timeout  = "2s"
+      }
+    ]
+    }
+  svelte.hcl: |
+    service {
+    id   = "svelte-app"
+    name = "svelte-app"
+    tags = ["web", "svelte"]
+    address = "host.docker.internal"
+    port = 5173
+
+    check {
+      id       = "svelte-app-check"
+      name     = "Svelte App Alive Check"
+      http     = "http://host.docker.internal:5173/health"
+      method   = "GET"
+      interval = "10s"
+      timeout  = "1s"
+    }
+    }

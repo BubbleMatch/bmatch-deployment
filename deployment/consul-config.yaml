@@ -27,7 +27,7 @@ data:
     check {
       id = "redis"
       name = "Redis health check"
-      tcp = "redis:6379"
+      tcp = "redis-service.default.svc.cluster.local:6379"
       interval = "10s"
       timeout = "2s"
     }
@@ -42,7 +42,7 @@ data:
       checks = [
         {
           name = "PostgreSQL TCP Check"
-          tcp = "postgres:5432"
+          tcp = "postgres-service.default.svc.cluster.local:5432"
           interval = "10s"
           timeout = "1s"
         }

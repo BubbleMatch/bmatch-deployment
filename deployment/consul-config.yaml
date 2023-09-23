@@ -37,7 +37,7 @@ data:
     {
       name = "postgres"
       tags = ["primary"]
-      address = "postgres"
+      address = "postgres-service.default.svc.cluster.local"
       port = 5432
       checks = [
         {
@@ -73,13 +73,13 @@ data:
     id   = "svelte-app"
     name = "svelte-app"
     tags = ["web", "svelte"]
-    address = "host.docker.internal"
+    address = "svelte-app-service.default.svc.cluster.local"
     port = 5173
 
     check {
       id       = "svelte-app-check"
       name     = "Svelte App Alive Check"
-      http     = "http://host.docker.internal:5173/health"
+      http     = "http://svelte-app-service.default.svc.cluster.local:5173/health"
       method   = "GET"
       interval = "10s"
       timeout  = "1s"

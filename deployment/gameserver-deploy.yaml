@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gameserver-deployment
+  labels:
+    app: gameserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gameserver
+  template:
+    metadata:
+      labels:
+        app: gameserver
+    spec:
+      containers:
+      - name: gameserver
+        image: glad2os/bmatch.gameserver:latest
+        ports:
+        - containerPort: 8005
+        - containerPort: 8004
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_DB
+        - name: RABBITMQ_USER
+          value: bmatch
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secrets
+              key: RABBITMQ_DEFAULT_PASS
+        - name: JWT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: jwt-token-secret
+              key: JWT_TOKEN
+        - name: CONSUL_HOST
+          value: consul.default.svc.cluster.local
+        - name: CONSUL_PORT
+          value: "8500"
+        - name: IS_PROD
+          value: 'true'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gameserver-service
+spec:
+  selector:
+    app: gameserver
+  ports:
+    - name: ws1
+      protocol: TCP
+      port: 8005
+      targetPort: 8005
+    - name: ws2
+      protocol: TCP
+      port: 8004
+      targetPort: 8004
+  type: ClusterIP

@@ -27,8 +27,6 @@ spec:
           value: "ws://192.168.2.73:8005"
         - name: VITE_WS_LOBBY_URL
           value: "ws://192.168.2.73:8004"
-        command: ["/bin/sh"]
-        args: ["env-to-file.sh"]
 ---
 apiVersion: v1
 kind: Service

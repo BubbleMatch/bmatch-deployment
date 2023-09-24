@@ -3,10 +3,17 @@ kind: Ingress
 metadata:
   name: svelte-app-ingress
   annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - bubblematch.io
+    - api.bubblematch.io
+    secretName: bubblematch-tls
   rules:
   - host: bubblematch.io
     http:

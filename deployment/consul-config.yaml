@@ -21,7 +21,7 @@ data:
     service {
     name = "redis"
     tags = ["primary"]
-    address = "redis"
+    address = "redis-service.default.svc.cluster.local"
     port = 6379
 
     check {
@@ -55,14 +55,14 @@ data:
     name = "rabbitmq"
     tags = ["message-queue", "amqp", "management"]
     
-    address = "rabbitmq"
+    address = "rabbitmq-service.default.svc.cluster.local"
     port    = 5672
     
     checks = [
       {
         id       = "rabbitmq_check"
         name     = "RabbitMQ health check"
-        http     = "http://rabbitmq:15672/"  # менеджер RabbitMQ
+        http     = "http://rabbitmq-service.default.svc.cluster.local:15672/"  # менеджер RabbitMQ
         interval = "10s"
         timeout  = "2s"
       }

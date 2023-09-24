@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: gameserver
-        image: glad2os/bmatch.gameserver:latest
+        image: glad2os/bmatch.gameserver
+        imagePullPolicy: Always
         ports:
         - containerPort: 8005
         - containerPort: 8004

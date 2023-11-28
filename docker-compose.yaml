@@ -60,15 +60,16 @@ services:
       - ./redis-conf/redis.conf:/usr/local/etc/redis/redis.conf
 
   rabbitmq:
-      image: bmatch-rabbitmq
-      ports:
-        - "15672:15672" # Менеджер RabbitMQ
-        - "5672:5672"   # AMQP порт
-      environment:
-        - RABBITMQ_DEFAULT_USER=bmatch
-        - RABBITMQ_DEFAULT_PASS=newpassword
-      labels:
-        NAME: "rabbitmq"
+    build: ./rabbitmq
+    ports:
+      - "15672:15672" # Менеджер RabbitMQ
+      - "5672:5672"   # AMQP порт
+    environment:
+      - RABBITMQ_DEFAULT_USER=bmatch
+      - RABBITMQ_DEFAULT_PASS=newpassword
+    labels:
+      NAME: "rabbitmq"
+
 
 volumes:
   db_data:

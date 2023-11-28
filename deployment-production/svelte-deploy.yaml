@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svelte-app
+  labels:
+    app: svelte-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svelte-app
+  template:
+    metadata:
+      labels:
+        app: svelte-app
+    spec:
+      containers:
+      - name: svelte-app
+        image: glad2os/bmatch.svelte:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5173
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svelte-app-service
+spec:
+  selector:
+    app: svelte-app
+  ports:
+  - protocol: TCP
+    port: 5173
+    targetPort: 5173
+  type: ClusterIP

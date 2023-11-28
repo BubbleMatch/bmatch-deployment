@@ -34,7 +34,7 @@ spec:
         - containerPort: 8002
         env:
         - name: IS_PROD
-          value: "true"
+          value: "false"
         - name: DB_SCHEME
           value: bmatch
         - name: DB_PASSWORD

@@ -1,0 +1,83 @@
+apiVersion: skaffold/v2beta20
+kind: Config
+metadata:
+  name: bmatch-deployment
+build:
+  artifacts:
+    - image: glad2os/bmatch-gameserver
+      context: bmatch-gameserver
+    - image: glad2os/bmatch-gateway
+      context: bmatch-gateway
+    - image: glad2os/bmatch-frontend
+      context: bmatch-frontend
+deploy:
+  kubectl:
+    manifests:
+      - deployment-dev/*.yaml
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: glad2os/bmatch-gameserver
+          context: bmatch-gameserver
+          docker:
+            dockerfile: Dockerfile
+        - image: glad2os/bmatch-gateway
+          context: bmatch-gateway
+          jib: {}
+        - image: glad2os/bmatch-frontend
+          context: bmatch-frontend
+          docker:
+            dockerfile: Dockerfile
+    deploy:
+      kubectl:
+        manifests:
+          - deployment-dev/*.yaml
+  - name: prod
+    build:
+      tagPolicy:
+        gitCommit: {}
+      artifacts:
+        - image: glad2os/bmatch-gameserver
+          context: bmatch-gameserver
+        - image: glad2os/bmatch-gateway
+          context: bmatch-gateway
+        - image: glad2os/bmatch-frontend
+          context: bmatch-frontend
+    deploy:
+      kubectl:
+        manifests:
+          - deployment-production/*.yaml
+portForward:
+  - resourceType: service
+    resourceName: postgres-service
+    port: 5432
+    localPort: 5432
+  - resourceType: service
+    resourceName: consul
+    port: 8500
+    localPort: 8500
+  - resourceType: service
+    resourceName: bmatch-gateway-service
+    port: 8002
+    localPort: 8002
+  - resourceType: service
+    resourceName: svelte-app-service
+    port: 5173
+    localPort: 5173
+  - resourceType: service
+    resourceName: gameserver-service
+    port: 8005
+    localPort: 8005
+  - resourceType: service
+    resourceName: gameserver-service
+    port: 8004
+    localPort: 8004
+  - resourceType: service
+    resourceName: redis-service
+    port: 6379
+    localPort: 6379
+  - resourceType: service
+    resourceName: rabbitmq-service
+    port: 15672
+    localPort: 15672

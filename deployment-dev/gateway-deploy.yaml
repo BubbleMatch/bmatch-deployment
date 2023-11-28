@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bmatch-gateway-service
+spec:
+  selector:
+    app: bmatch-gateway
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8002
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bmatch-gateway-deployment
+  labels:
+    app: bmatch-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bmatch-gateway
+  template:
+    metadata:
+      labels:
+        app: bmatch-gateway
+    spec:
+      containers:
+      - name: bmatch-gateway
+        image: glad2os/bmatch.gateway
+        ports:
+        - containerPort: 8002
+        env:
+        - name: IS_PROD
+          value: "false"
+        - name: DB_SCHEME
+          value: bmatch
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_PASSWORD
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secrets
+              key: POSTGRES_USER
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: consul.default.svc.cluster.local
+        - name: DB_HOST
+          value: postgresql-service.default.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_HOST
+          value: redis-service.default.svc.cluster.local
+        - name: JWT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: jwt-token-secret
+              key: JWT_TOKEN
+        command: ["/bin/sh", "-c"]
+        args: ["sh /app/wait-for-postgres.sh consul-service.default.svc.cluster.local:8500 && java -jar /app/app.jar"]

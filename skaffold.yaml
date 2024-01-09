@@ -61,6 +61,10 @@ portForward:
     resourceName: bmatch-gateway-service
     port: 8002
     localPort: 8002
+ # - resourceType: service
+ #   resourceName: bmatch-gateway-service
+ #   port: 5005
+ #   localPort: 5005
   - resourceType: service
     resourceName: svelte-app-service
     port: 5173

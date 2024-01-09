@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: svelte-app
-        image: glad2os/bmatch-frontend
+        image: bmatch-frontend
         ports:
         - containerPort: 5173
       volumes:

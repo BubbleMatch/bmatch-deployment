@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: svelte-config
+data:
+  config.js: |
+    const config = {
+      apiUrl: 'test1',
+      wsGameUrl: 'ws://192.168.2.73:8005',
+      wsLobbyUrl: 'ws://192.168.2.73:8004'
+    };
+
+    export default config;

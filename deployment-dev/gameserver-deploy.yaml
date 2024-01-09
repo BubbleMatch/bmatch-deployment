@@ -32,8 +32,8 @@ spec:
             secretKeyRef:
               name: postgres-secrets
               key: POSTGRES_PASSWORD
-        - name: POSTGRES_DB
-          value: postgresql-service.default.svc.cluster.local
+                # - name: POSTGRES_DB
+                #  value: postgres-service.default.svc.cluster.local
         - name: RABBITMQ_USER
           value: bmatch
         - name: RABBITMQ_PASSWORD

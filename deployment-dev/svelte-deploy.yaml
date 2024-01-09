@@ -19,6 +19,10 @@ spec:
         image: glad2os/bmatch-frontend
         ports:
         - containerPort: 5173
+      volumes:
+      - name: config-volume
+        configMap:
+          name: svelte-config
 ---
 apiVersion: v1
 kind: Service
